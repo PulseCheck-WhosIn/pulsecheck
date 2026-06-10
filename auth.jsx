@@ -62,7 +62,7 @@ async function sbPost(path, body, token) {
 // ── Auth Context ──────────────────────────────────────────────────────────────
 const AuthContext = createContext(null);
 
-export function AuthProvider({ children }) {
+function AuthProvider({ children }) {
   const [session,  setSession]  = useState(null);   // Supabase session
   const [profile,  setProfile]  = useState(null);   // gym_users row + gym info
   const [loading,  setLoading]  = useState(true);
@@ -131,7 +131,7 @@ export function AuthProvider({ children }) {
   );
 }
 
-export const useAuth = () => useContext(AuthContext);
+const useAuth = () => useContext(AuthContext);
 
 // ── Shared input style ────────────────────────────────────────────────────────
 const inputStyle = {
@@ -190,7 +190,7 @@ function AuthShell({ children, title, sub }) {
 }
 
 // ── Sign In ───────────────────────────────────────────────────────────────────
-export function SignIn({ onSignUp, onForgot }) {
+function SignIn({ onSignUp, onForgot }) {
   const { signIn, error, setError } = useAuth();
   const [email,    setEmail]    = useState("");
   const [password, setPassword] = useState("");
@@ -247,7 +247,7 @@ export function SignIn({ onSignUp, onForgot }) {
 }
 
 // ── Owner Sign Up (gym onboarding) ────────────────────────────────────────────
-export function SignUp({ onSignIn }) {
+function SignUp({ onSignIn }) {
   const [step,    setStep]    = useState(1);  // 1=account, 2=gym, 3=platform, 4=done
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState(null);
@@ -440,7 +440,7 @@ export function SignUp({ onSignIn }) {
 }
 
 // ── Forgot Password ───────────────────────────────────────────────────────────
-export function ForgotPassword({ onBack }) {
+function ForgotPassword({ onBack }) {
   const [email,   setEmail]   = useState("");
   const [sent,    setSent]    = useState(false);
   const [loading, setLoading] = useState(false);
@@ -485,7 +485,7 @@ export function ForgotPassword({ onBack }) {
 }
 
 // ── Accept Invitation (trainer signup) ───────────────────────────────────────
-export function AcceptInvite({ token }) {
+function AcceptInvite({ token }) {
   const { signIn } = useAuth();
   const [invite,  setInvite]  = useState(null);
   const [loading, setLoading] = useState(true);
@@ -599,7 +599,7 @@ export function AcceptInvite({ token }) {
 }
 
 // ── Settings — Owner only ─────────────────────────────────────────────────────
-export function Settings() {
+function Settings() {
   const { profile, session } = useAuth();
   const [activeTab,  setActiveTab]  = useState("users");
   const [users,      setUsers]      = useState([]);
@@ -889,7 +889,7 @@ export function Settings() {
 }
 
 // ── Auth Router — wraps the whole app ─────────────────────────────────────────
-export function AuthRouter({ children }) {
+function AuthRouter({ children }) {
   const { session, profile, loading } = useAuth();
   const [screen, setScreen] = useState("signin"); // signin | signup | forgot | invite
 
