@@ -66,7 +66,7 @@ async function sbPost(path, body, token) {
 }
 
 // ── Auth Context ──────────────────────────────────────────────────────────────
-const SessionContext = /*#__PURE__*/createContext(null);
+const CtxStore = /*#__PURE__*/createContext(null);
 function AppShell({
   children
 }) {
@@ -131,7 +131,7 @@ function AppShell({
     const ownerRoutes = [...trainerRoutes, "dashboard", "growth", "bizhealth", "analytics", "settings", "users", "billing", "integrations"];
     return isOwner ? ownerRoutes.includes(route) : trainerRoutes.includes(route);
   };
-  return /*#__PURE__*/React.createElement(SessionContext.Provider, {
+  return /*#__PURE__*/React.createElement(CtxStore.Provider, {
     value: {
       session,
       profile,
@@ -146,7 +146,7 @@ function AppShell({
     }
   }, children);
 }
-const useSession = () => useContext(SessionContext);
+const getCtx = () => useContext(CtxStore);
 
 // ── Shared input style ────────────────────────────────────────────────────────
 const inputStyle = {
@@ -322,7 +322,7 @@ function SignIn({
     signIn,
     error,
     setError
-  } = useSession();
+  } = getCtx();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -777,7 +777,7 @@ function AcceptInvite({
 }) {
   const {
     signIn
-  } = useSession();
+  } = getCtx();
   const [invite, setInvite] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -955,7 +955,7 @@ function Settings() {
   const {
     profile,
     session
-  } = useSession();
+  } = getCtx();
   const [activeTab, setActiveTab] = useState("users");
   const [users, setUsers] = useState([]);
   const [inviteEmail, setInviteEmail] = useState("");
@@ -1560,7 +1560,7 @@ function AppGate({
     session,
     profile,
     loading
-  } = useSession();
+  } = getCtx();
   const [screen, setScreen] = useState("signin"); // signin | signup | forgot | invite
 
   // Check for invite token in URL
@@ -1622,14 +1622,14 @@ if (typeof window !== 'undefined') {
 }
 
 // Register on window namespace for boot script access
-window._pc = window._pc || {};
-window._pc.AppProvider = AuthProvider;
-window._pc.AppRouter = AuthRouter;
-window._pc.useAppAuth = useSession;
-window._pc.ready = true;
+window.PC = window.PC || {};
+window.PC.AppProvider = AuthProvider;
+window.PC.AppRouter = AuthRouter;
+window.PC.getCtx = getCtx;
+window.PC.ready = true;
 
 // Global exports
 window.AppShell = AppShell;
 window.AppGate = AppGate;
-window.useSession = useSession;
+window.getCtx = getCtx;
 window.Settings = Settings;
