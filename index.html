@@ -4,20 +4,17 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PulseCheck — Who's In. Who's Drifting. Who Needs You.</title>
-  <meta name="description" content="Member retention intelligence for boutique fitness gyms."/>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%236366f1'/><polyline points='10,58 26,58 34,36 42,66 50,26 58,50 66,44 80,44' stroke='white' stroke-width='6' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #0f1117; color: #e8eaf0; font-family: 'DM Sans', sans-serif; }
-    #root { min-height: 100vh; }
-    #loading {
-      position: fixed; inset: 0; background: #0f1117;
-      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
-      z-index: 9999;
-    }
-    #loading svg { animation: pulse 1.5s ease-in-out infinite; }
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(0.95)} }
-    #loading p { color: #6b7194; font-size: 13px; letter-spacing: 0.05em; }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:#0f1117;color:#e8eaf0;font-family:'DM Sans',sans-serif;}
+    #root{min-height:100vh;}
+    #loading{position:fixed;inset:0;background:#0f1117;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:9999;}
+    #loading svg{animation:pulse 1.5s ease-in-out infinite;}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.6;transform:scale(0.95)}}
+    #loading p{color:#6b7194;font-size:13px;letter-spacing:0.05em;}
   </style>
 </head>
 <body>
@@ -27,56 +24,41 @@
         <stop stop-color="#6366f1"/><stop offset="1" stop-color="#a5b4fc"/>
       </linearGradient></defs>
       <rect width="100" height="100" rx="24" fill="url(#g)"/>
-      <polyline points="10,58 26,58 34,36 42,66 50,26 58,50 66,44 80,44"
-        stroke="white" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      <polyline points="10,58 26,58 34,36 42,66 50,26 58,50 66,44 80,44" stroke="white" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
     </svg>
     <p>PULSECHECK</p>
   </div>
   <div id="root"></div>
 
-  <!-- Config — credentials -->
   <script src="config.js"></script>
-
-  <!-- React + Babel standalone (no build step needed) -->
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
 
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <script type="text/babel" src="auth.jsx" data-presets="react" data-type="module"></script>
+  <script type="text/babel" src="app.jsx" data-presets="react" data-type="module"></script>
 
-  <!-- Auth layer -->
-  <script type="text/babel" src="auth.jsx" data-presets="react"></script>
-
-  <!-- Main app -->
-  <script type="text/babel" src="app.jsx" data-presets="react"></script>
-
-  <!-- Boot -->
-  <script type="text/babel" data-presets="react">
-    const { useState, useEffect } = React;
-
-    function Boot() {
-      const { session, profile, loading } = useAuth();
-
-      useEffect(() => {
-        if (!loading) {
-          document.getElementById('loading')?.remove();
-        }
-      }, [loading]);
-
-      return (
-        <AuthRouter>
-          <PulseCheck />
-        </AuthRouter>
+  <script>
+    // Wait for Babel to finish compiling both files, then mount
+    function waitAndMount() {
+      if (typeof AuthProvider === 'undefined' || typeof PulseCheck === 'undefined' || typeof AuthRouter === 'undefined') {
+        setTimeout(waitAndMount, 100);
+        return;
+      }
+      const { useState, useEffect } = React;
+      function Boot() {
+        const auth = useAuth();
+        useEffect(() => {
+          if (!auth.loading) document.getElementById('loading')?.remove();
+        }, [auth.loading]);
+        return React.createElement(AuthRouter, null, React.createElement(PulseCheck));
+      }
+      ReactDOM.createRoot(document.getElementById('root')).render(
+        React.createElement(AuthProvider, null, React.createElement(Boot))
       );
     }
-
-    ReactDOM.createRoot(document.getElementById('root')).render(
-      <AuthProvider>
-        <Boot />
-      </AuthProvider>
-    );
+    // Start checking after a short delay for Babel to begin
+    setTimeout(waitAndMount, 500);
   </script>
 </body>
 </html>
