@@ -33,35 +33,25 @@
   <script src="config.js"></script>
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
-
-  <script type="text/babel" src="auth.jsx" data-presets="react"></script>
-  <script type="text/babel" src="app.jsx" data-presets="react"></script>
-
+  <script src="auth.js"></script>
+  <script src="app.js"></script>
   <script>
-    window._pc = window._pc || {};
-    function tryMount() {
-      var pc = window._pc;
-      if (!pc.ready || !pc.AppProvider || !pc.AppRouter || typeof PulseCheck === 'undefined') {
-        setTimeout(tryMount, 150);
-        return;
-      }
+    (function() {
       var h = React.createElement;
       function Boot() {
-        var ctx = pc.useAppAuth();
+        var ctx = useAuth();
         React.useEffect(function() {
           if (!ctx.loading) {
             var el = document.getElementById('loading');
             if (el) el.remove();
           }
         }, [ctx.loading]);
-        return h(pc.AppRouter, null, h(PulseCheck));
+        return h(AuthRouter, null, h(PulseCheck));
       }
       ReactDOM.createRoot(document.getElementById('root')).render(
-        h(pc.AppProvider, null, h(Boot))
+        h(AuthProvider, null, h(Boot))
       );
-    }
-    setTimeout(tryMount, 800);
+    })();
   </script>
 </body>
 </html>
