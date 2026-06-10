@@ -1,3 +1,6 @@
+"use strict";
+var require = function(m) { if(m==="react") return React; if(m==="react-dom") return ReactDOM; return {}; };
+
 const {
   useState,
   useMemo,
@@ -4262,3 +4265,6 @@ function PulseCheck() {
     }
   }, n.l)))));
 }
+
+// Global export
+window.PulseCheck = PulseCheck;
