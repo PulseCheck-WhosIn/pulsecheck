@@ -1634,7 +1634,7 @@ window._pc.ready = true;
 // Global exports
 window.AppShell = AppShell;
 window.AppGate = AppGate;
-window.useSession = getCtx;
+window.getCtx = getCtx;
 window.Settings = Settings;
 
 // Global exports for index.html
