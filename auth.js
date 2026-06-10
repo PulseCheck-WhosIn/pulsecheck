@@ -1609,17 +1609,7 @@ function AppGate({
   return children;
 }
 
-// Export for HTML script tag usage
-if (typeof window !== 'undefined') {
-  window.PulseCheckAuth = {
-    AuthProvider,
-    AuthRouter,
-    useAuth,
-    Settings,
-    SignIn,
-    SignUp
-  };
-}
+// Export for HTML script tag usage — names remapped
 
 // Register on window namespace for boot script access
 window.PC = window.PC || {};
