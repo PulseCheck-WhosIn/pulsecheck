@@ -1615,9 +1615,9 @@ function AppGate({
 // Export for HTML script tag usage
 if (typeof window !== 'undefined') {
   window.PulseCheckAuth = {
-    AuthProvider,
-    AuthRouter,
-    useAuth,
+    AppShell,
+    AppGate,
+    getCtx,
     Settings,
     SignIn,
     SignUp
@@ -1626,8 +1626,8 @@ if (typeof window !== 'undefined') {
 
 // Register on window namespace for boot script access
 window._pc = window._pc || {};
-window._pc.AppProvider = AuthProvider;
-window._pc.AppRouter = AuthRouter;
+window._pc.AppProvider = AppShell;
+window._pc.AppRouter = AppGate;
 window._pc.useAppAuth = useSession;
 window._pc.ready = true;
 
