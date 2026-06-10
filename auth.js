@@ -149,7 +149,7 @@ function AppShell({
     }
   }, children);
 }
-const useSession = () => (0, _react.useContext)(SessionContext);
+const getCtx = () => (0, _react.useContext)(SessionContext);
 
 // ── Shared input style ────────────────────────────────────────────────────────
 const inputStyle = {
@@ -325,7 +325,7 @@ function SignIn({
     signIn,
     error,
     setError
-  } = useSession();
+  } = getCtx();
   const [email, setEmail] = (0, _react.useState)("");
   const [password, setPassword] = (0, _react.useState)("");
   const [loading, setLoading] = (0, _react.useState)(false);
@@ -780,7 +780,7 @@ function AcceptInvite({
 }) {
   const {
     signIn
-  } = useSession();
+  } = getCtx();
   const [invite, setInvite] = (0, _react.useState)(null);
   const [loading, setLoading] = (0, _react.useState)(true);
   const [saving, setSaving] = (0, _react.useState)(false);
@@ -958,7 +958,7 @@ function Settings() {
   const {
     profile,
     session
-  } = useSession();
+  } = getCtx();
   const [activeTab, setActiveTab] = (0, _react.useState)("users");
   const [users, setUsers] = (0, _react.useState)([]);
   const [inviteEmail, setInviteEmail] = (0, _react.useState)("");
@@ -1563,7 +1563,7 @@ function AppGate({
     session,
     profile,
     loading
-  } = useSession();
+  } = getCtx();
   const [screen, setScreen] = (0, _react.useState)("signin"); // signin | signup | forgot | invite
 
   // Check for invite token in URL
@@ -1628,13 +1628,13 @@ if (typeof window !== 'undefined') {
 window._pc = window._pc || {};
 window._pc.AppProvider = AppShell;
 window._pc.AppRouter = AppGate;
-window._pc.useAppAuth = useSession;
+window._pc.useAppAuth = getCtx;
 window._pc.ready = true;
 
 // Global exports
 window.AppShell = AppShell;
 window.AppGate = AppGate;
-window.useSession = useSession;
+window.useSession = getCtx;
 window.Settings = Settings;
 
 // Global exports for index.html
