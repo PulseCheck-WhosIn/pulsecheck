@@ -29,28 +29,25 @@
     <p>PULSECHECK</p>
   </div>
   <div id="root"></div>
-
   <script src="config.js"></script>
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="auth.js"></script>
   <script src="app.js"></script>
   <script>
-    (function() {
-      var h = React.createElement;
-      function Boot() {
-        var ctx = useAuth();
-        React.useEffect(function() {
-          if (!ctx.loading) {
-            var el = document.getElementById('loading');
-            if (el) el.remove();
-          }
-        }, [ctx.loading]);
-        return h(AuthRouter, null, h(PulseCheck));
+    (function boot() {
+      if (typeof AppShell === 'undefined' || typeof AppGate === 'undefined' || typeof PulseCheck === 'undefined') {
+        return setTimeout(boot, 100);
       }
-      ReactDOM.createRoot(document.getElementById('root')).render(
-        h(AuthProvider, null, h(Boot))
-      );
+      var h = React.createElement;
+      function Root() {
+        var ctx = useSession();
+        React.useEffect(function() {
+          if (!ctx.loading) { var el = document.getElementById('loading'); if (el) el.remove(); }
+        }, [ctx.loading]);
+        return h(AppGate, null, h(PulseCheck));
+      }
+      ReactDOM.createRoot(document.getElementById('root')).render(h(AppShell, null, h(Root)));
     })();
   </script>
 </body>
