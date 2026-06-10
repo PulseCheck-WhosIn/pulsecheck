@@ -1,5 +1,8 @@
-import { useState, useEffect, createContext, useContext } from "react";
+"use strict";
+/* browser shim */
+var require = function(m) { if(m==="react") return React; if(m==="react-dom") return ReactDOM; return {}; };
 
+var _react = require("react");
 // ── Brand tokens (match main app) ─────────────────────────────────────────────
 const T = {
   bg: "#0f1117",
@@ -66,15 +69,15 @@ async function sbPost(path, body, token) {
 }
 
 // ── Auth Context ──────────────────────────────────────────────────────────────
-const CtxStore = /*#__PURE__*/createContext(null);
+const SessionContext = /*#__PURE__*/(0, _react.createContext)(null);
 function AppShell({
   children
 }) {
-  const [session, setSession] = useState(null); // Supabase session
-  const [profile, setProfile] = useState(null); // gym_users row + gym info
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  useEffect(() => {
+  const [session, setSession] = (0, _react.useState)(null); // Supabase session
+  const [profile, setProfile] = (0, _react.useState)(null); // gym_users row + gym info
+  const [loading, setLoading] = (0, _react.useState)(true);
+  const [error, setError] = (0, _react.useState)(null);
+  (0, _react.useEffect)(() => {
     // Check stored session on mount
     const stored = localStorage.getItem("pc_session");
     if (stored) {
@@ -131,7 +134,7 @@ function AppShell({
     const ownerRoutes = [...trainerRoutes, "dashboard", "growth", "bizhealth", "analytics", "settings", "users", "billing", "integrations"];
     return isOwner ? ownerRoutes.includes(route) : trainerRoutes.includes(route);
   };
-  return /*#__PURE__*/React.createElement(CtxStore.Provider, {
+  return /*#__PURE__*/React.createElement(SessionContext.Provider, {
     value: {
       session,
       profile,
@@ -146,7 +149,7 @@ function AppShell({
     }
   }, children);
 }
-const getCtx = () => useContext(CtxStore);
+const useSession = () => (0, _react.useContext)(SessionContext);
 
 // ── Shared input style ────────────────────────────────────────────────────────
 const inputStyle = {
@@ -322,10 +325,10 @@ function SignIn({
     signIn,
     error,
     setError
-  } = getCtx();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  } = useSession();
+  const [email, setEmail] = (0, _react.useState)("");
+  const [password, setPassword] = (0, _react.useState)("");
+  const [loading, setLoading] = (0, _react.useState)(false);
   async function handle(e) {
     e.preventDefault();
     setLoading(true);
@@ -423,10 +426,10 @@ function SignIn({
 function SignUp({
   onSignIn
 }) {
-  const [step, setStep] = useState(1); // 1=account, 2=gym, 3=platform, 4=done
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [form, setForm] = useState({
+  const [step, setStep] = (0, _react.useState)(1); // 1=account, 2=gym, 3=platform, 4=done
+  const [loading, setLoading] = (0, _react.useState)(false);
+  const [error, setError] = (0, _react.useState)(null);
+  const [form, setForm] = (0, _react.useState)({
     name: "",
     email: "",
     password: "",
@@ -702,9 +705,9 @@ function SignUp({
 function ForgotPassword({
   onBack
 }) {
-  const [email, setEmail] = useState("");
-  const [sent, setSent] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = (0, _react.useState)("");
+  const [sent, setSent] = (0, _react.useState)(false);
+  const [loading, setLoading] = (0, _react.useState)(false);
   async function handle(e) {
     e.preventDefault();
     setLoading(true);
@@ -777,17 +780,17 @@ function AcceptInvite({
 }) {
   const {
     signIn
-  } = getCtx();
-  const [invite, setInvite] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState(null);
-  const [form, setForm] = useState({
+  } = useSession();
+  const [invite, setInvite] = (0, _react.useState)(null);
+  const [loading, setLoading] = (0, _react.useState)(true);
+  const [saving, setSaving] = (0, _react.useState)(false);
+  const [error, setError] = (0, _react.useState)(null);
+  const [form, setForm] = (0, _react.useState)({
     name: "",
     password: "",
     confirm: ""
   });
-  useEffect(() => {
+  (0, _react.useEffect)(() => {
     // Look up invitation by token
     fetch(`${SUPABASE_URL}/rest/v1/invitations?token=eq.${token}&select=*,gyms(name,slug)`, {
       headers: {
@@ -955,14 +958,14 @@ function Settings() {
   const {
     profile,
     session
-  } = getCtx();
-  const [activeTab, setActiveTab] = useState("users");
-  const [users, setUsers] = useState([]);
-  const [inviteEmail, setInviteEmail] = useState("");
-  const [inviteRole, setInviteRole] = useState("trainer");
-  const [inviting, setInviting] = useState(false);
-  const [inviteSent, setInviteSent] = useState(false);
-  const [targets, setTargets] = useState({
+  } = useSession();
+  const [activeTab, setActiveTab] = (0, _react.useState)("users");
+  const [users, setUsers] = (0, _react.useState)([]);
+  const [inviteEmail, setInviteEmail] = (0, _react.useState)("");
+  const [inviteRole, setInviteRole] = (0, _react.useState)("trainer");
+  const [inviting, setInviting] = (0, _react.useState)(false);
+  const [inviteSent, setInviteSent] = (0, _react.useState)(false);
+  const [targets, setTargets] = (0, _react.useState)({
     "Legacy M:M": 3,
     "12 Month": 3,
     "6 Month": 3,
@@ -971,8 +974,8 @@ function Settings() {
     "21 Day Starter": 3,
     "default": 3
   });
-  const [settingsSaved, setSettingsSaved] = useState(false);
-  useEffect(() => {
+  const [settingsSaved, setSettingsSaved] = (0, _react.useState)(false);
+  (0, _react.useEffect)(() => {
     if (!session) return;
     sbGet(`/gym_users?gym_id=eq.${profile?.gym_id}&order=role.asc,name.asc`, session.access_token).then(data => setUsers(data || []));
   }, [session, profile]);
@@ -1560,8 +1563,8 @@ function AppGate({
     session,
     profile,
     loading
-  } = getCtx();
-  const [screen, setScreen] = useState("signin"); // signin | signup | forgot | invite
+  } = useSession();
+  const [screen, setScreen] = (0, _react.useState)("signin"); // signin | signup | forgot | invite
 
   // Check for invite token in URL
   const urlParams = new URLSearchParams(typeof window !== "undefined" ? window.location.search : "");
@@ -1609,17 +1612,34 @@ function AppGate({
   return children;
 }
 
-// Export for HTML script tag usage — names remapped
+// Export for HTML script tag usage
+if (typeof window !== 'undefined') {
+  window.PulseCheckAuth = {
+    AuthProvider,
+    AuthRouter,
+    useAuth,
+    Settings,
+    SignIn,
+    SignUp
+  };
+}
 
 // Register on window namespace for boot script access
-window.PC = window.PC || {};
-window.PC.AppProvider = AuthProvider;
-window.PC.AppRouter = AuthRouter;
-window.PC.getCtx = getCtx;
-window.PC.ready = true;
+window._pc = window._pc || {};
+window._pc.AppProvider = AuthProvider;
+window._pc.AppRouter = AuthRouter;
+window._pc.useAppAuth = useSession;
+window._pc.ready = true;
 
 // Global exports
 window.AppShell = AppShell;
 window.AppGate = AppGate;
-window.getCtx = getCtx;
+window.useSession = useSession;
 window.Settings = Settings;
+
+// Global exports for index.html
+window.AppShell = AppShell;
+window.AppGate  = AppGate;
+window.getCtx   = getCtx;
+window.Settings = Settings;
+window.SignIn   = SignIn;
