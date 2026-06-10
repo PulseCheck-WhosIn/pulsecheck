@@ -11,7 +11,7 @@
     *{box-sizing:border-box;margin:0;padding:0;}
     body{background:#0f1117;color:#e8eaf0;font-family:'DM Sans',sans-serif;}
     #root{min-height:100vh;}
-    #splash{position:fixed;inset:0;background:#0f1117;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:9999;transition:opacity 0.3s;}
+    #splash{position:fixed;inset:0;background:#0f1117;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:9999;transition:opacity 0.4s;}
     #splash svg{animation:pulse 1.5s ease-in-out infinite;}
     @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.6;transform:scale(0.95)}}
     #splash p{color:#6b7194;font-size:13px;letter-spacing:0.05em;}
@@ -29,39 +29,44 @@
     <p>PULSECHECK</p>
   </div>
   <div id="root"></div>
-
   <script src="config.js"></script>
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="auth.js"></script>
   <script src="app.js"></script>
   <script>
+    function hideSplash() {
+      var s = document.getElementById('splash');
+      if (s) { s.style.opacity = '0'; setTimeout(function(){s.remove();}, 400); }
+    }
     window.addEventListener('load', function() {
-      // Small delay to ensure all scripts have run
       setTimeout(function() {
         try {
-          var splash = document.getElementById('splash');
-          var root = ReactDOM.createRoot(document.getElementById('root'));
-          root.render(
+          ReactDOM.createRoot(document.getElementById('root')).render(
             React.createElement(window.AppShell, null,
-              React.createElement(function Boot() {
+              React.createElement(function App() {
                 var ctx = window.getCtx();
+                // Hide splash as soon as loading is done
                 React.useEffect(function() {
-                  if (!ctx.loading && splash) {
-                    splash.style.opacity = '0';
-                    setTimeout(function() { splash.remove(); }, 300);
-                  }
+                  if (!ctx.loading) hideSplash();
                 }, [ctx.loading]);
+                // Fallback: always hide splash after 3 seconds
+                React.useEffect(function() {
+                  var t = setTimeout(hideSplash, 3000);
+                  return function(){ clearTimeout(t); };
+                }, []);
                 return React.createElement(window.AppGate, null,
                   React.createElement(PulseCheck)
                 );
               })
             )
           );
-        } catch(err) {
-          document.getElementById('splash').innerHTML = '<p style="color:#f87171;padding:20px;text-align:center">Error: ' + err.message + '</p>';
+        } catch(e) {
+          hideSplash();
+          document.getElementById('root').innerHTML =
+            '<div style="color:#f87171;padding:40px;font-family:monospace;font-size:13px;">Error: ' + e.message + '</div>';
         }
-      }, 200);
+      }, 100);
     });
   </script>
 </body>
