@@ -29,25 +29,15 @@
     <p>PULSECHECK</p>
   </div>
   <div id="root"></div>
-  <script src="config.js"></script>
   <script>
-    // Hard fallback: always remove splash after 3s regardless of React
-    function removeSplash() {
-      var s = document.getElementById('splash');
-      if (s) { s.style.opacity = '0'; setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 400); }
-    }
-    setTimeout(removeSplash, 3000);
-    window.removeSplash = removeSplash;
-    
-    // Catch any unhandled errors and show them
-    window.addEventListener('error', function(e) {
-      document.getElementById('root').innerHTML = 
-        '<div style="padding:40px;color:#f87171;font-family:monospace;font-size:13px;line-height:1.6">' +
-        '<div style="font-size:18px;margin-bottom:12px">⚠ Load error</div>' +
-        e.message + '<br><br>' + (e.filename || '') + ':' + e.lineno + '</div>';
+    function removeSplash(){var s=document.getElementById('splash');if(s){s.style.opacity='0';setTimeout(function(){if(s.parentNode)s.parentNode.removeChild(s);},400);}}
+    setTimeout(removeSplash,4000);
+    window.addEventListener('error',function(e){
+      document.getElementById('root').innerHTML='<div style="padding:40px;color:#f87171;font-family:monospace;font-size:13px">Error: '+e.message+'<br>'+e.filename+'<br>line '+e.lineno+'</div>';
       removeSplash();
     });
   </script>
-  <script type="module" src="bundle.js"></script>
+  <script src="config.js"></script>
+  <script type="module" src="main.js"></script>
 </body>
 </html>
