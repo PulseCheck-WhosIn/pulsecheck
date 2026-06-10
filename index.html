@@ -7,27 +7,62 @@
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%236366f1'/><polyline points='10,58 26,58 34,36 42,66 50,26 58,50 66,44 80,44' stroke='white' stroke-width='6' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-  <style>*{box-sizing:border-box;margin:0;padding:0;}body{background:#0f1117;color:#e8eaf0;font-family:'DM Sans',sans-serif;}#root{min-height:100vh;}#loading{position:fixed;inset:0;background:#0f1117;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:9999;}#loading svg{animation:pulse 1.5s ease-in-out infinite;}@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.6;transform:scale(0.95)}}#loading p{color:#6b7194;font-size:13px;letter-spacing:0.05em;}</style>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:#0f1117;color:#e8eaf0;font-family:'DM Sans',sans-serif;}
+    #root{min-height:100vh;}
+    #splash{position:fixed;inset:0;background:#0f1117;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;z-index:9999;transition:opacity 0.3s;}
+    #splash svg{animation:pulse 1.5s ease-in-out infinite;}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.6;transform:scale(0.95)}}
+    #splash p{color:#6b7194;font-size:13px;letter-spacing:0.05em;}
+  </style>
 </head>
 <body>
-  <div id="loading"><svg width="52" height="52" viewBox="0 0 100 100" fill="none"><defs><linearGradient id="g" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse"><stop stop-color="#6366f1"/><stop offset="1" stop-color="#a5b4fc"/></linearGradient></defs><rect width="100" height="100" rx="24" fill="url(#g)"/><polyline points="10,58 26,58 34,36 42,66 50,26 58,50 66,44 80,44" stroke="white" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><p>PULSECHECK</p></div>
+  <div id="splash">
+    <svg width="52" height="52" viewBox="0 0 100 100" fill="none">
+      <defs><linearGradient id="g" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#6366f1"/><stop offset="1" stop-color="#a5b4fc"/>
+      </linearGradient></defs>
+      <rect width="100" height="100" rx="24" fill="url(#g)"/>
+      <polyline points="10,58 26,58 34,36 42,66 50,26 58,50 66,44 80,44" stroke="white" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </svg>
+    <p>PULSECHECK</p>
+  </div>
   <div id="root"></div>
+
   <script src="config.js"></script>
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
   <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
   <script src="auth.js"></script>
   <script src="app.js"></script>
   <script>
-    (function go() {
-      if (!window.AppShell || !window.AppGate || !window.getCtx || typeof PulseCheck === 'undefined') return setTimeout(go, 100);
-      var h = React.createElement;
-      function Root() {
-        var c = window.getCtx();
-        React.useEffect(function() { if (!c.loading) { var e = document.getElementById('loading'); if(e) e.remove(); } }, [c.loading]);
-        return h(window.AppGate, null, h(PulseCheck));
-      }
-      ReactDOM.createRoot(document.getElementById('root')).render(h(window.AppShell, null, h(Root)));
-    })();
+    window.addEventListener('load', function() {
+      // Small delay to ensure all scripts have run
+      setTimeout(function() {
+        try {
+          var splash = document.getElementById('splash');
+          var root = ReactDOM.createRoot(document.getElementById('root'));
+          root.render(
+            React.createElement(window.AppShell, null,
+              React.createElement(function Boot() {
+                var ctx = window.getCtx();
+                React.useEffect(function() {
+                  if (!ctx.loading && splash) {
+                    splash.style.opacity = '0';
+                    setTimeout(function() { splash.remove(); }, 300);
+                  }
+                }, [ctx.loading]);
+                return React.createElement(window.AppGate, null,
+                  React.createElement(PulseCheck)
+                );
+              })
+            )
+          );
+        } catch(err) {
+          document.getElementById('splash').innerHTML = '<p style="color:#f87171;padding:20px;text-align:center">Error: ' + err.message + '</p>';
+        }
+      }, 200);
+    });
   </script>
 </body>
 </html>
