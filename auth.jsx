@@ -926,3 +926,10 @@ function AuthRouter({ children }) {
 if (typeof window !== 'undefined') {
   window.PulseCheckAuth = { AuthProvider, AuthRouter, useAuth, Settings, SignIn, SignUp };
 }
+
+// Register on window namespace for boot script access
+window._pc = window._pc || {};
+window._pc.AppProvider  = AuthProvider;
+window._pc.AppRouter    = AuthRouter;
+window._pc.useAppAuth   = useAuth;
+window._pc.ready        = true;
