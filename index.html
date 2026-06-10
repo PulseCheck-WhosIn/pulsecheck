@@ -30,44 +30,6 @@
   </div>
   <div id="root"></div>
   <script src="config.js"></script>
-  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-  <script src="auth.js"></script>
-  <script src="app.js"></script>
-  <script>
-    function hideSplash() {
-      var s = document.getElementById('splash');
-      if (s) { s.style.opacity = '0'; setTimeout(function(){s.remove();}, 400); }
-    }
-    window.addEventListener('load', function() {
-      setTimeout(function() {
-        try {
-          ReactDOM.createRoot(document.getElementById('root')).render(
-            React.createElement(window.AppShell, null,
-              React.createElement(function App() {
-                var ctx = window.getCtx();
-                // Hide splash as soon as loading is done
-                React.useEffect(function() {
-                  if (!ctx.loading) hideSplash();
-                }, [ctx.loading]);
-                // Fallback: always hide splash after 3 seconds
-                React.useEffect(function() {
-                  var t = setTimeout(hideSplash, 3000);
-                  return function(){ clearTimeout(t); };
-                }, []);
-                return React.createElement(window.AppGate, null,
-                  React.createElement(PulseCheck)
-                );
-              })
-            )
-          );
-        } catch(e) {
-          hideSplash();
-          document.getElementById('root').innerHTML =
-            '<div style="color:#f87171;padding:40px;font-family:monospace;font-size:13px;">Error: ' + e.message + '</div>';
-        }
-      }, 100);
-    });
-  </script>
+  <script type="module" src="app.js"></script>
 </body>
 </html>
