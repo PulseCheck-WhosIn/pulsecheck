@@ -1627,3 +1627,10 @@ window._pc.AppProvider = AuthProvider;
 window._pc.AppRouter = AuthRouter;
 window._pc.useAppAuth = useAuth;
 window._pc.ready = true;
+
+// Export to window for index.html boot
+window.AuthProvider   = AuthProvider;
+window.AuthRouter     = AuthRouter;
+window.useAuth        = useAuth;
+window.SignIn         = SignIn;
+window.Settings       = Settings;
