@@ -66,8 +66,8 @@ async function sbPost(path, body, token) {
 }
 
 // ── Auth Context ──────────────────────────────────────────────────────────────
-const AuthContext = /*#__PURE__*/createContext(null);
-function AuthProvider({
+const SessionContext = /*#__PURE__*/createContext(null);
+function AppShell({
   children
 }) {
   const [session, setSession] = useState(null); // Supabase session
@@ -131,7 +131,7 @@ function AuthProvider({
     const ownerRoutes = [...trainerRoutes, "dashboard", "growth", "bizhealth", "analytics", "settings", "users", "billing", "integrations"];
     return isOwner ? ownerRoutes.includes(route) : trainerRoutes.includes(route);
   };
-  return /*#__PURE__*/React.createElement(AuthContext.Provider, {
+  return /*#__PURE__*/React.createElement(SessionContext.Provider, {
     value: {
       session,
       profile,
@@ -146,7 +146,7 @@ function AuthProvider({
     }
   }, children);
 }
-const useAuth = () => useContext(AuthContext);
+const useSession = () => useContext(SessionContext);
 
 // ── Shared input style ────────────────────────────────────────────────────────
 const inputStyle = {
@@ -322,7 +322,7 @@ function SignIn({
     signIn,
     error,
     setError
-  } = useAuth();
+  } = useSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -777,7 +777,7 @@ function AcceptInvite({
 }) {
   const {
     signIn
-  } = useAuth();
+  } = useSession();
   const [invite, setInvite] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -955,7 +955,7 @@ function Settings() {
   const {
     profile,
     session
-  } = useAuth();
+  } = useSession();
   const [activeTab, setActiveTab] = useState("users");
   const [users, setUsers] = useState([]);
   const [inviteEmail, setInviteEmail] = useState("");
@@ -1553,14 +1553,14 @@ function Settings() {
 }
 
 // ── Auth Router — wraps the whole app ─────────────────────────────────────────
-function AuthRouter({
+function AppGate({
   children
 }) {
   const {
     session,
     profile,
     loading
-  } = useAuth();
+  } = useSession();
   const [screen, setScreen] = useState("signin"); // signin | signup | forgot | invite
 
   // Check for invite token in URL
@@ -1625,12 +1625,11 @@ if (typeof window !== 'undefined') {
 window._pc = window._pc || {};
 window._pc.AppProvider = AuthProvider;
 window._pc.AppRouter = AuthRouter;
-window._pc.useAppAuth = useAuth;
+window._pc.useAppAuth = useSession;
 window._pc.ready = true;
 
-// Export to window for index.html boot
-window.AuthProvider   = AuthProvider;
-window.AuthRouter     = AuthRouter;
-window.useAuth        = useAuth;
-window.SignIn         = SignIn;
-window.Settings       = Settings;
+// Global exports
+window.AppShell = AppShell;
+window.AppGate = AppGate;
+window.useSession = useSession;
+window.Settings = Settings;
